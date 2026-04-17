@@ -9,6 +9,9 @@ const MOODS  = ['ROUGH', 'LOW', 'OKAY', 'GOOD', 'SOLID'];
 const ENERGY = ['DRAINED', 'TIRED', 'NEUTRAL', 'CHARGED', 'LOCKED IN'];
 const SLEEP  = ['<3 HRS', '3–5 HRS', '5–6 HRS', '6–8 HRS', '8+ HRS'];
 
+const MOOD_COLORS  = ['#4A1515', '#4A3010', '#2A2A20', '#1A3020', '#2D5C32'];
+const MOOD_LABELS  = ['ROUGH',   'LOW',     'OKAY',    'GOOD',    'SOLID'];
+
 type Slot = 'am' | 'pm';
 type Entry = { mood: number; energy: number; sleep: number; created_at: number; slot: Slot };
 
@@ -22,6 +25,13 @@ function todayBounds() {
   return { start: start.getTime(), end: end.getTime() };
 }
 
+function thirtyDayStart() {
+  const d = new Date(); d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() - 29);
+  return d.getTime();
+}
+
+// ─── Scale Row ────────────────────────────────────────────────────────────────
 function ScaleRow({ label, options, value, onChange }: {
   label: string; options: string[]; value: number; onChange: (v: number) => void;
 }) {
@@ -47,6 +57,7 @@ function ScaleRow({ label, options, value, onChange }: {
   );
 }
 
+// ─── Logged Card ──────────────────────────────────────────────────────────────
 function LoggedCard({ entry, slot }: { entry: Entry; slot: Slot }) {
   return (
     <View style={[s.card, s.cardDone]}>
@@ -69,6 +80,7 @@ function LoggedCard({ entry, slot }: { entry: Entry; slot: Slot }) {
   );
 }
 
+// ─── Check-In Card ────────────────────────────────────────────────────────────
 function CheckInCard({ slot, onSubmit }: { slot: Slot; onSubmit: (mood: number, energy: number, sleep: number) => void }) {
   const [mood,   setMood]   = useState<number | null>(null);
   const [energy, setEnergy] = useState<number | null>(null);
@@ -95,22 +107,105 @@ function CheckInCard({ slot, onSubmit }: { slot: Slot; onSubmit: (mood: number, 
   );
 }
 
+// ─── 30-Day Heatmap ───────────────────────────────────────────────────────────
+function MoodHeatmap({ entries }: { entries: Entry[] }) {
+  const days = Array.from({ length: 30 }, (_, i) => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() - (29 - i));
+    return d;
+  });
+
+  // Build map: dateString → latest mood value for that day
+  const byDay: Record<string, number> = {};
+  for (const e of entries) {
+    const key = new Date(e.created_at).toDateString();
+    byDay[key] = e.mood; // entries sorted ASC so last write wins = most recent
+  }
+
+  const today = new Date().toDateString();
+
+  // Stats: days logged, avg mood
+  const logged = Object.keys(byDay).length;
+  const moodValues = Object.values(byDay);
+  const avgMood = moodValues.length
+    ? Math.round(moodValues.reduce((a, b) => a + b, 0) / moodValues.length)
+    : null;
+
+  return (
+    <View style={hm.wrapper}>
+      <View style={hm.headerRow}>
+        <Text style={hm.title}>30-DAY INTEL</Text>
+        <View style={hm.statsRow}>
+          <Text style={hm.stat}>{logged} days logged</Text>
+          {avgMood !== null && (
+            <View style={[hm.avgBadge, { backgroundColor: MOOD_COLORS[avgMood] }]}>
+              <Text style={hm.avgText}>AVG · {MOOD_LABELS[avgMood]}</Text>
+            </View>
+          )}
+        </View>
+      </View>
+
+      {/* Grid: 6 columns × 5 rows = 30 cells */}
+      <View style={hm.grid}>
+        {days.map((day, i) => {
+          const key    = day.toDateString();
+          const mood   = byDay[key];
+          const filled = mood !== undefined;
+          const isToday = key === today;
+          return (
+            <View
+              key={i}
+              style={[
+                hm.cell,
+                { backgroundColor: filled ? MOOD_COLORS[mood] : '#161614' },
+                isToday && hm.cellToday,
+              ]}
+            >
+              <Text style={[hm.cellDay, filled && hm.cellDayFilled]}>
+                {day.getDate()}
+              </Text>
+            </View>
+          );
+        })}
+      </View>
+
+      {/* Legend */}
+      <View style={hm.legend}>
+        {MOOD_COLORS.map((color, i) => (
+          <View key={i} style={hm.legendItem}>
+            <View style={[hm.legendDot, { backgroundColor: color }]} />
+            <Text style={hm.legendLabel}>{MOOD_LABELS[i]}</Text>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+// ─── Main Screen ──────────────────────────────────────────────────────────────
 export default function BriefScreen() {
-  const [callSign, setCallSign] = useState('');
-  const [amEntry,  setAmEntry]  = useState<Entry | null>(null);
-  const [pmEntry,  setPmEntry]  = useState<Entry | null>(null);
+  const [callSign,       setCallSign]       = useState('');
+  const [amEntry,        setAmEntry]        = useState<Entry | null>(null);
+  const [pmEntry,        setPmEntry]        = useState<Entry | null>(null);
+  const [heatmapEntries, setHeatmapEntries] = useState<Entry[]>([]);
 
   const slot = currentSlot();
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'MORNING BRIEF' : hour < 17 ? 'AFTERNOON BRIEF' : 'EVENING BRIEF';
 
   const loadAll = useCallback(async () => {
-    const [cs] = await Promise.all([getPref('call_sign')]);
+    const cs = await getPref('call_sign');
     setCallSign(cs ?? '');
+
     const db = await getDB();
     const { start, end } = todayBounds();
+
+    // Today's entries
     const rows = await db.getAllAsync<Entry>(
-      `SELECT mood, energy, sleep, created_at, slot FROM mood_entries WHERE created_at >= ? AND created_at <= ? ORDER BY created_at ASC;`,
+      `SELECT mood, energy, sleep, created_at, slot FROM mood_entries
+       WHERE created_at >= ? AND created_at <= ?
+       ORDER BY created_at ASC;`,
       [start, end]
     );
     setAmEntry(null); setPmEntry(null);
@@ -118,25 +213,40 @@ export default function BriefScreen() {
       if (row.slot === 'am') setAmEntry(row);
       if (row.slot === 'pm') setPmEntry(row);
     }
+
+    // 30-day heatmap entries
+    const hRows = await db.getAllAsync<Entry>(
+      `SELECT mood, energy, sleep, created_at, slot FROM mood_entries
+       WHERE created_at >= ?
+       ORDER BY created_at ASC;`,
+      [thirtyDayStart()]
+    );
+    setHeatmapEntries(hRows);
   }, []);
 
   useFocusEffect(useCallback(() => { loadAll(); }, [loadAll]));
 
-  async function handleSubmit(s: Slot, mood: number, energy: number, sleep: number) {
+  async function handleSubmit(sl: Slot, mood: number, energy: number, sleep: number) {
     const db = await getDB();
     const id = `me_${Date.now()}`;
     await db.runAsync(
       `INSERT INTO mood_entries (id, created_at, mood, energy, sleep, slot) VALUES (?, ?, ?, ?, ?, ?);`,
-      [id, Date.now(), mood, energy, sleep, s]
+      [id, Date.now(), mood, energy, sleep, sl]
     );
-    const entry: Entry = { mood, energy, sleep, created_at: Date.now(), slot: s };
-    if (s === 'am') setAmEntry(entry);
+    const entry: Entry = { mood, energy, sleep, created_at: Date.now(), slot: sl };
+    if (sl === 'am') setAmEntry(entry);
     else setPmEntry(entry);
+    // Refresh heatmap
+    const hRows = await db.getAllAsync<Entry>(
+      `SELECT mood, energy, sleep, created_at, slot FROM mood_entries WHERE created_at >= ? ORDER BY created_at ASC;`,
+      [thirtyDayStart()]
+    );
+    setHeatmapEntries(hRows);
   }
 
   const otherSlot: Slot = slot === 'am' ? 'pm' : 'am';
-  const otherEntry      = slot === 'am' ? pmEntry : amEntry;
-  const currentEntry    = slot === 'am' ? amEntry : pmEntry;
+  const otherEntry      = slot === 'am' ? pmEntry  : amEntry;
+  const currentEntry    = slot === 'am' ? amEntry  : pmEntry;
 
   return (
     <SafeAreaView style={s.safe} edges={['bottom']}>
@@ -171,11 +281,14 @@ export default function BriefScreen() {
           </View>
         )}
 
+        <MoodHeatmap entries={heatmapEntries} />
+
       </ScrollView>
     </SafeAreaView>
   );
 }
 
+// ─── Styles ───────────────────────────────────────────────────────────────────
 const s = StyleSheet.create({
   safe:          { flex: 1, backgroundColor: '#111110' },
   scroll:        { paddingHorizontal: 20, paddingTop: 24, paddingBottom: 40 },
@@ -211,4 +324,23 @@ const sc = StyleSheet.create({
   pipOn:     { backgroundColor: '#141E15', borderColor: '#5B8A5F' },
   pipText:   { fontSize: 9, color: '#2E2E2B', fontWeight: '700', textAlign: 'center' },
   pipTextOn: { color: '#7FBF85' },
+});
+
+const hm = StyleSheet.create({
+  wrapper:    { backgroundColor: '#1C1C1A', borderRadius: 14, borderWidth: 1, borderColor: '#252523', padding: 20, marginTop: 8 },
+  headerRow:  { marginBottom: 16 },
+  title:      { fontSize: 10, color: '#3A3A36', fontWeight: '600', letterSpacing: 0.8, marginBottom: 8 },
+  statsRow:   { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  stat:       { fontSize: 12, color: '#5A5A54' },
+  avgBadge:   { borderRadius: 4, paddingHorizontal: 8, paddingVertical: 3 },
+  avgText:    { fontSize: 9, color: '#fff', fontWeight: '700', letterSpacing: 0.6 },
+  grid:       { flexDirection: 'row', flexWrap: 'wrap', gap: 5, marginBottom: 16 },
+  cell:       { width: '14.8%', aspectRatio: 1, borderRadius: 6, justifyContent: 'flex-end', padding: 4 },
+  cellToday:  { borderWidth: 1.5, borderColor: '#5B8A5F' },
+  cellDay:    { fontSize: 9, color: '#2A2A28', fontWeight: '600' },
+  cellDayFilled: { color: '#ffffff60' },
+  legend:     { flexDirection: 'row', justifyContent: 'space-between' },
+  legendItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  legendDot:  { width: 8, height: 8, borderRadius: 2 },
+  legendLabel:{ fontSize: 8, color: '#3A3A36', fontWeight: '600' },
 });
