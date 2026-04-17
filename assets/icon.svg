@@ -1,0 +1,21 @@
+<svg width="1024" height="1024" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+<rect width="680" height="680" fill="#111110"/>
+<path d="M88 490 L108 268 Q145 252 190 250 Q235 252 272 268 L292 490 Z" fill="#334E35"/>
+<rect x="173" y="242" width="34" height="36" rx="3" fill="#334E35"/>
+<ellipse cx="190" cy="202" rx="45" ry="49" fill="#334E35"/>
+<path d="M144 216 L144 174 Q144 118 190 113 Q236 118 236 174 L236 216 Z" fill="#263D28"/>
+<rect x="236" y="185" width="12" height="22" rx="4" fill="#1E3020"/>
+<path d="M388 490 L408 268 Q445 252 490 250 Q535 252 572 268 L592 490 Z" fill="#334E35"/>
+<rect x="473" y="242" width="34" height="36" rx="3" fill="#334E35"/>
+<ellipse cx="490" cy="202" rx="45" ry="49" fill="#334E35"/>
+<path d="M446 206 L446 163 Q446 104 490 99 Q534 104 534 163 L534 206 Z" fill="#263D28"/>
+<path d="M426 200 L554 200 L550 216 L430 216 Z" fill="#1E3020"/>
+<path d="M534 200 L558 200 L554 218 L534 216 Z" fill="#1A2C1B"/>
+<path d="M340 168 L464 222 L464 398 Q464 470 340 514 Q216 470 216 398 L216 222 Z" fill="#0D0D0B" stroke="#3D6640" stroke-width="2.5"/>
+<path d="M340 178 L452 228 L452 395 Q452 460 340 502 Q228 460 228 395 L228 228 Z" fill="none" stroke="#243D26" stroke-width="1"/>
+<circle cx="340" cy="184" r="8" fill="#3D6640"/>
+<circle cx="340" cy="184" r="4" fill="#5B8A5F"/>
+<text x="340" y="458" text-anchor="middle" font-family="Arial Black,Impact,sans-serif" font-size="196" font-weight="900" letter-spacing="-4" fill="#ECEBD4">RZ</text>
+<path d="M254 530 L340 560 L426 530 L426 546 L340 576 L254 546 Z" fill="#B22222"/>
+<path d="M276 552 L340 575 L404 552 L404 565 L340 582 L276 565 Z" fill="#7A1515"/>
+</svg>

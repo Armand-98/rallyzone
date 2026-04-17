@@ -1,18 +1,21 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
-    Alert,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { getPref, setPref } from '../../db/prefs';
 
 type Role = 'veteran' | 'first_responder';
+
+const PRIVACY_URL = 'https://armand-98.github.io/rallyzone';
 
 export default function ProfileScreen() {
   const [callSign,      setCallSign]      = useState('');
@@ -158,12 +161,37 @@ export default function ProfileScreen() {
               { label: 'Version',  value: '0.1.0 · Beta' },
               { label: 'Made by',  value: 'LyfieldCreationsOS' },
               { label: 'Storage',  value: 'Local only — nothing leaves your device' },
-            ].map((item, i, arr) => (
-              <View key={item.label} style={[s.aboutRow, i < arr.length - 1 && s.aboutRowBorder]}>
+            ].map((item, i) => (
+              <View key={item.label} style={[s.aboutRow, s.aboutRowBorder]}>
                 <Text style={s.aboutLabel}>{item.label}</Text>
                 <Text style={s.aboutValue}>{item.value}</Text>
               </View>
             ))}
+
+            {/* Privacy Policy row */}
+            <TouchableOpacity
+              style={s.aboutRow}
+              onPress={() => router.push('/privacy')}
+              activeOpacity={0.7}
+            >
+              <Text style={s.aboutLabel}>Privacy Policy</Text>
+              <Text style={s.linkValue}>View ↗</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Legal */}
+        <View style={s.section}>
+          <Text style={s.sectionLabel}>LEGAL</Text>
+          <View style={s.card}>
+            <TouchableOpacity
+              style={s.aboutRow}
+              onPress={() => Linking.openURL(PRIVACY_URL)}
+              activeOpacity={0.7}
+            >
+              <Text style={s.aboutLabel}>View hosted privacy policy</Text>
+              <Text style={s.linkValue}>Open ↗</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -214,6 +242,7 @@ const s = StyleSheet.create({
   aboutRowBorder: { borderBottomWidth: 1, borderBottomColor: '#252523' },
   aboutLabel:     { fontSize: 13, color: '#3A3A36' },
   aboutValue:     { fontSize: 12, color: '#5A5A54', textAlign: 'right', flex: 1, marginLeft: 16 },
+  linkValue:      { fontSize: 12, color: '#5B8A5F', fontWeight: '600' },
   resetBtn:       { backgroundColor: '#1E0808', borderRadius: 12, borderWidth: 1, borderColor: '#4A1010', paddingVertical: 16, alignItems: 'center', marginBottom: 8 },
   resetText:      { color: '#A32D2D', fontSize: 13, fontWeight: '700', letterSpacing: 0.8 },
   resetNote:      { fontSize: 11, color: '#2E2E2B', textAlign: 'center' },

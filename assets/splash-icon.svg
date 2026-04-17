@@ -1,0 +1,10 @@
+<svg width="512" height="512" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+<rect width="680" height="680" fill="#111110"/>
+<path d="M340 168 L464 222 L464 398 Q464 470 340 514 Q216 470 216 398 L216 222 Z" fill="#161614" stroke="#3D6640" stroke-width="3"/>
+<path d="M340 178 L452 228 L452 395 Q452 460 340 502 Q228 460 228 395 L228 228 Z" fill="none" stroke="#243D26" stroke-width="1.5"/>
+<circle cx="340" cy="184" r="8" fill="#3D6640"/>
+<circle cx="340" cy="184" r="4" fill="#5B8A5F"/>
+<text x="340" y="458" text-anchor="middle" font-family="Arial Black,Impact,sans-serif" font-size="196" font-weight="900" letter-spacing="-4" fill="#ECEBD4">RZ</text>
+<path d="M254 530 L340 560 L426 530 L426 546 L340 576 L254 546 Z" fill="#B22222"/>
+<path d="M276 552 L340 575 L404 552 L404 565 L340 582 L276 565 Z" fill="#7A1515"/>
+</svg>
