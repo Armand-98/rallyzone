@@ -172,6 +172,21 @@ export default function ProfileScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
+              style={[s.aboutRow, s.aboutRowBorder]}
+              onPress={() => router.push('/insights')}
+              activeOpacity={0.7}
+            >
+              <View style={s.premiumRowLeft}>
+                <Text style={s.premiumIcon}>📊</Text>
+                <View>
+                  <Text style={s.premiumLabel}>Pattern Insights</Text>
+                  <Text style={s.premiumDesc}>Your mood, trigger & sleep trends</Text>
+                </View>
+              </View>
+              <Text style={s.linkValue}>View ↗</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
               style={s.aboutRow}
               onPress={() => router.push('/paywall')}
               activeOpacity={0.7}
