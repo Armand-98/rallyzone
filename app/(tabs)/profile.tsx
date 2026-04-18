@@ -187,6 +187,21 @@ export default function ProfileScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity
+              style={[s.aboutRow, s.aboutRowBorder]}
+              onPress={() => router.push('/export')}
+              activeOpacity={0.7}
+            >
+              <View style={s.premiumRowLeft}>
+                <Text style={s.premiumIcon}>📄</Text>
+                <View>
+                  <Text style={s.premiumLabel}>PDF Export</Text>
+                  <Text style={s.premiumDesc}>VA-ready personal health report</Text>
+                </View>
+              </View>
+              <Text style={s.linkValue}>Export ↗</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
               style={s.aboutRow}
               onPress={() => router.push('/paywall')}
               activeOpacity={0.7}
