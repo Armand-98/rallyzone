@@ -1,12 +1,14 @@
 import * as SQLite from 'expo-sqlite';
 
-let db: SQLite.SQLiteDatabase | null = null;
+// Store the promise — not the resolved value.
+// Any concurrent caller awaits the same promise instead of racing to open a second connection.
+let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
 
-export async function getDB(): Promise<SQLite.SQLiteDatabase> {
-  if (!db) {
-    db = await SQLite.openDatabaseAsync('rallyzone.db');
+export function getDB(): Promise<SQLite.SQLiteDatabase> {
+  if (!dbPromise) {
+    dbPromise = SQLite.openDatabaseAsync('rallyzone.db');
   }
-  return db;
+  return dbPromise;
 }
 
 // ─── Migrations ───────────────────────────────────────────────────────────────
