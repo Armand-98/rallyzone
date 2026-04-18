@@ -31,14 +31,22 @@ export function useRevenueCat() {
 
     load();
 
-    const listener = Purchases.addCustomerInfoUpdateListener((info) => {
+    // addCustomerInfoUpdateListener returns a cleanup function directly
+    // in react-native-purchases v6+, not an object with .remove()
+    const removeListener = Purchases.addCustomerInfoUpdateListener((info) => {
       setCustomerInfo(info);
       setIsPremium(
         typeof info.entitlements.active[ENTITLEMENT_ID] !== 'undefined'
       );
     });
 
-    return () => listener.remove();
+    return () => {
+      if (typeof removeListener === 'function') {
+        removeListener();
+      } else if (removeListener && typeof (removeListener as any).remove === 'function') {
+        (removeListener as any).remove();
+      }
+    };
   }, []);
 
   return { customerInfo, isPremium, loading };

@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { PremiumGate } from '../components/PremiumGate';
 import { getPref } from '../db/prefs';
 import { ExportOptions, generateAndSharePDF } from '../hooks/usePDFExport';
 
@@ -72,123 +73,125 @@ export default function ExportScreen() {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>← Back</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>PDF Export</Text>
-        <View style={{ width: 60 }} />
-      </View>
-
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-
-        <Text style={styles.intro}>
-          Generate a personal health summary you can share with your VA provider or VSO.
-          Choose what to include below.
-        </Text>
-
-        {/* Real name for report */}
-        <Text style={styles.sectionLabel}>YOUR NAME FOR THIS REPORT</Text>
-        <View style={styles.card}>
-          <TextInput
-            style={styles.nameInput}
-            placeholder="Full name (e.g. John Smith)"
-            placeholderTextColor="#3A3A36"
-            value={realName}
-            onChangeText={setRealName}
-            autoCapitalize="words"
-            returnKeyType="done"
-          />
+    <PremiumGate fallbackLabel="PDF Export is a premium feature. Generate a VA-ready health summary from your on-device data.">
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+            <Text style={styles.backText}>← Back</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>PDF Export</Text>
+          <View style={{ width: 60 }} />
         </View>
-        <Text style={styles.nameNote}>
-          Used only on this report — your in-app call sign stays unchanged.
-        </Text>
 
-        {/* Date range */}
-        <Text style={styles.sectionLabel}>DATE RANGE</Text>
-        <View style={styles.card}>
-          <View style={styles.segmented}>
-            {DAY_OPTIONS.map((opt) => (
-              <TouchableOpacity
-                key={opt.value}
-                style={[styles.segment, days === opt.value && styles.segmentActive]}
-                onPress={() => setDays(opt.value)}
-              >
-                <Text style={[styles.segmentText, days === opt.value && styles.segmentTextActive]}>
-                  {opt.label}
-                </Text>
-              </TouchableOpacity>
+        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+
+          <Text style={styles.intro}>
+            Generate a personal health summary you can share with your VA provider or VSO.
+            Choose what to include below.
+          </Text>
+
+          {/* Real name for report */}
+          <Text style={styles.sectionLabel}>YOUR NAME FOR THIS REPORT</Text>
+          <View style={styles.card}>
+            <TextInput
+              style={styles.nameInput}
+              placeholder="Full name (e.g. John Smith)"
+              placeholderTextColor="#3A3A36"
+              value={realName}
+              onChangeText={setRealName}
+              autoCapitalize="words"
+              returnKeyType="done"
+            />
+          </View>
+          <Text style={styles.nameNote}>
+            Used only on this report — your in-app call sign stays unchanged.
+          </Text>
+
+          {/* Date range */}
+          <Text style={styles.sectionLabel}>DATE RANGE</Text>
+          <View style={styles.card}>
+            <View style={styles.segmented}>
+              {DAY_OPTIONS.map((opt) => (
+                <TouchableOpacity
+                  key={opt.value}
+                  style={[styles.segment, days === opt.value && styles.segmentActive]}
+                  onPress={() => setDays(opt.value)}
+                >
+                  <Text style={[styles.segmentText, days === opt.value && styles.segmentTextActive]}>
+                    {opt.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          {/* Sections to include */}
+          <Text style={styles.sectionLabel}>INCLUDE IN REPORT</Text>
+          <View style={styles.card}>
+            {[
+              { label: 'Mood, Energy & Sleep',  desc: 'Daily check-in averages and trends',    value: includeMood,      set: setIncludeMood },
+              { label: 'Trigger Log',           desc: 'Events, reactions and intensity scores', value: includeTriggers,  set: setIncludeTriggers },
+              { label: 'Calm Toolkit Usage',    desc: 'Breathing and grounding sessions',       value: includeGrounding, set: setIncludeGrounding },
+              { label: 'Personal Notes',        desc: 'Add a note before exporting',            value: includeNotes,     set: setIncludeNotes },
+            ].map((item, i, arr) => (
+              <View key={item.label} style={[styles.toggleRow, i < arr.length - 1 && styles.toggleRowBorder]}>
+                <View style={styles.toggleLeft}>
+                  <Text style={styles.toggleLabel}>{item.label}</Text>
+                  <Text style={styles.toggleDesc}>{item.desc}</Text>
+                </View>
+                <Switch
+                  value={item.value}
+                  onValueChange={item.set}
+                  trackColor={{ false: '#252523', true: '#1D9E75' }}
+                  thumbColor="#fff"
+                />
+              </View>
             ))}
           </View>
-        </View>
 
-        {/* Sections to include */}
-        <Text style={styles.sectionLabel}>INCLUDE IN REPORT</Text>
-        <View style={styles.card}>
-          {[
-            { label: 'Mood, Energy & Sleep',  desc: 'Daily check-in averages and trends',   value: includeMood,      set: setIncludeMood },
-            { label: 'Trigger Log',           desc: 'Events, reactions and intensity scores', value: includeTriggers,  set: setIncludeTriggers },
-            { label: 'Calm Toolkit Usage',    desc: 'Breathing and grounding sessions',       value: includeGrounding, set: setIncludeGrounding },
-            { label: 'Personal Notes',        desc: 'Add a note before exporting',            value: includeNotes,     set: setIncludeNotes },
-          ].map((item, i, arr) => (
-            <View key={item.label} style={[styles.toggleRow, i < arr.length - 1 && styles.toggleRowBorder]}>
-              <View style={styles.toggleLeft}>
-                <Text style={styles.toggleLabel}>{item.label}</Text>
-                <Text style={styles.toggleDesc}>{item.desc}</Text>
+          {/* Notes field */}
+          {includeNotes && (
+            <>
+              <Text style={styles.sectionLabel}>YOUR NOTES</Text>
+              <View style={styles.card}>
+                <TextInput
+                  style={styles.notesInput}
+                  placeholder="Add context for your provider — what's been going on, what you want them to know…"
+                  placeholderTextColor="#3A3A36"
+                  multiline
+                  value={userNotes}
+                  onChangeText={setUserNotes}
+                  textAlignVertical="top"
+                />
               </View>
-              <Switch
-                value={item.value}
-                onValueChange={item.set}
-                trackColor={{ false: '#252523', true: '#1D9E75' }}
-                thumbColor="#fff"
-              />
-            </View>
-          ))}
-        </View>
-
-        {/* Notes field */}
-        {includeNotes && (
-          <>
-            <Text style={styles.sectionLabel}>YOUR NOTES</Text>
-            <View style={styles.card}>
-              <TextInput
-                style={styles.notesInput}
-                placeholder="Add context for your provider — what's been going on, what you want them to know…"
-                placeholderTextColor="#3A3A36"
-                multiline
-                value={userNotes}
-                onChangeText={setUserNotes}
-                textAlignVertical="top"
-              />
-            </View>
-          </>
-        )}
-
-        {/* Disclaimer */}
-        <View style={styles.disclaimer}>
-          <Text style={styles.disclaimerText}>
-            This report is personal health data for supporting documentation only.
-            It is not a VA form and does not constitute a medical or legal record.
-            You control exactly what is included. Nothing is transmitted to any server.
-          </Text>
-        </View>
-
-        {/* Export button */}
-        <TouchableOpacity
-          style={[styles.exportBtn, loading && styles.exportBtnDisabled]}
-          onPress={handleExport}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.exportBtnText}>Generate & Share PDF</Text>
+            </>
           )}
-        </TouchableOpacity>
 
-      </ScrollView>
-    </View>
+          {/* Disclaimer */}
+          <View style={styles.disclaimer}>
+            <Text style={styles.disclaimerText}>
+              This report is personal health data for supporting documentation only.
+              It is not a VA form and does not constitute a medical or legal record.
+              You control exactly what is included. Nothing is transmitted to any server.
+            </Text>
+          </View>
+
+          {/* Export button */}
+          <TouchableOpacity
+            style={[styles.exportBtn, loading && styles.exportBtnDisabled]}
+            onPress={handleExport}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.exportBtnText}>Generate & Share PDF</Text>
+            )}
+          </TouchableOpacity>
+
+        </ScrollView>
+      </View>
+    </PremiumGate>
   );
 }
 

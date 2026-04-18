@@ -1,13 +1,13 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import Purchases from 'react-native-purchases';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -71,11 +71,21 @@ export default function PaywallScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
-        <TouchableOpacity style={styles.closeBtn} onPress={() => router.back()}>
+      {/* Explicit header with close button */}
+      <View style={styles.header}>
+        <View style={{ width: 44 }} />
+        <Text style={styles.headerTitle}>RallyZone Premium</Text>
+        <TouchableOpacity
+          style={styles.closeBtn}
+          onPress={() => router.back()}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
           <Text style={styles.closeText}>✕</Text>
         </TouchableOpacity>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
         <View style={styles.badge}>
           <Text style={styles.badgeText}>PREMIUM</Text>
@@ -154,9 +164,11 @@ export default function PaywallScreen() {
 
 const styles = StyleSheet.create({
   container:         { flex: 1, backgroundColor: '#111110' },
+  header:            { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#1A1A18' },
+  headerTitle:       { fontSize: 14, fontWeight: '600', color: '#888780' },
+  closeBtn:          { width: 44, height: 44, alignItems: 'center', justifyContent: 'center', backgroundColor: '#1A1A18', borderRadius: 22 },
+  closeText:         { color: '#F0EFE8', fontSize: 16, fontWeight: '600' },
   scroll:            { padding: 20, paddingBottom: 64 },
-  closeBtn:          { alignSelf: 'flex-end', padding: 8, marginBottom: 12 },
-  closeText:         { color: '#888', fontSize: 18 },
   badge:             { alignSelf: 'flex-start', backgroundColor: '#1D9E75', borderRadius: 99, paddingHorizontal: 12, paddingVertical: 4, marginBottom: 12 },
   badgeText:         { color: '#fff', fontSize: 10, fontWeight: '700', letterSpacing: 1.2 },
   headline:          { fontSize: 28, fontWeight: '700', color: '#F0EFE8', marginBottom: 8, lineHeight: 34 },

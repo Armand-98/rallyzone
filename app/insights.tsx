@@ -1,14 +1,15 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { PremiumGate } from '../components/PremiumGate';
 import { getInsights, InsightsSummary } from '../hooks/useInsights';
 
 const MOOD_LABELS = ['Rough', 'Low', 'Okay', 'Good', 'Solid'];
@@ -16,7 +17,7 @@ const MOOD_COLORS = ['#A32D2D', '#C4722A', '#888780', '#1D9E75', '#2ECC8A'];
 
 function moodColor(val: number | null): string {
   if (val === null) return '#3A3A36';
-  return MOOD_COLORS[Math.round(Math.clamp ? Math.clamp(val, 0, 4) : Math.min(4, Math.max(0, val)))];
+  return MOOD_COLORS[Math.round(Math.min(4, Math.max(0, val)))];
 }
 
 function moodLabel(val: number | null): string {
@@ -61,178 +62,180 @@ export default function InsightsScreen() {
   }, []);
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>← Back</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Pattern Insights</Text>
-        <View style={{ width: 60 }} />
-      </View>
-
-      {loading ? (
-        <View style={styles.loading}>
-          <ActivityIndicator color="#1D9E75" />
+    <PremiumGate fallbackLabel="Pattern Insights is a premium feature. See your mood trends, trigger themes, and sleep patterns — all on-device.">
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+            <Text style={styles.backText}>← Back</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Pattern Insights</Text>
+          <View style={{ width: 60 }} />
         </View>
-      ) : !data || data.totalEntries < 3 ? (
-        <View style={styles.empty}>
-          <Text style={styles.emptyIcon}>📊</Text>
-          <Text style={styles.emptyTitle}>Not enough data yet</Text>
-          <Text style={styles.emptyText}>
-            Log at least 3 mission briefs to start seeing your patterns.
-          </Text>
-        </View>
-      ) : (
-        <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
-          {/* Mood Overview */}
-          <Text style={styles.sectionLabel}>MOOD OVERVIEW</Text>
-          <View style={styles.card}>
-            <View style={styles.statRow}>
-              <View style={styles.stat}>
-                <Text style={styles.statLabel}>7-DAY AVG</Text>
-                <Text style={[styles.statValue, { color: moodColor(data.avgMood7) }]}>
-                  {moodLabel(data.avgMood7)}
-                </Text>
-                <Text style={styles.statSub}>{fmt(data.avgMood7)} / 4</Text>
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.stat}>
-                <Text style={styles.statLabel}>30-DAY AVG</Text>
-                <Text style={[styles.statValue, { color: moodColor(data.avgMood30) }]}>
-                  {moodLabel(data.avgMood30)}
-                </Text>
-                <Text style={styles.statSub}>{fmt(data.avgMood30)} / 4</Text>
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.stat}>
-                <Text style={styles.statLabel}>TREND</Text>
-                <Text style={[styles.statValue, { color: trendColor(data.moodTrend) }]}>
-                  {trendIcon(data.moodTrend)}
-                </Text>
-                <Text style={styles.statSub}>{data.moodTrend}</Text>
-              </View>
-            </View>
+        {loading ? (
+          <View style={styles.loading}>
+            <ActivityIndicator color="#1D9E75" />
           </View>
+        ) : !data || data.totalEntries < 3 ? (
+          <View style={styles.empty}>
+            <Text style={styles.emptyIcon}>📊</Text>
+            <Text style={styles.emptyTitle}>Not enough data yet</Text>
+            <Text style={styles.emptyText}>
+              Log at least 3 mission briefs to start seeing your patterns.
+            </Text>
+          </View>
+        ) : (
+          <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
-          {/* Best / Worst Days */}
-          {(data.bestDayOfWeek || data.worstDayOfWeek) && (
-            <>
-              <Text style={styles.sectionLabel}>DAY OF WEEK PATTERNS</Text>
-              <View style={styles.card}>
-                <View style={styles.statRow}>
-                  <View style={styles.stat}>
-                    <Text style={styles.statLabel}>BEST DAY</Text>
-                    <Text style={[styles.statValue, { color: '#1D9E75', fontSize: 16 }]}>
-                      {data.bestDayOfWeek ?? '—'}
-                    </Text>
-                  </View>
-                  <View style={styles.statDivider} />
-                  <View style={styles.stat}>
-                    <Text style={styles.statLabel}>HARDEST DAY</Text>
-                    <Text style={[styles.statValue, { color: '#A32D2D', fontSize: 16 }]}>
-                      {data.worstDayOfWeek ?? '—'}
-                    </Text>
-                  </View>
+            {/* Mood Overview */}
+            <Text style={styles.sectionLabel}>MOOD OVERVIEW</Text>
+            <View style={styles.card}>
+              <View style={styles.statRow}>
+                <View style={styles.stat}>
+                  <Text style={styles.statLabel}>7-DAY AVG</Text>
+                  <Text style={[styles.statValue, { color: moodColor(data.avgMood7) }]}>
+                    {moodLabel(data.avgMood7)}
+                  </Text>
+                  <Text style={styles.statSub}>{fmt(data.avgMood7)} / 4</Text>
+                </View>
+                <View style={styles.statDivider} />
+                <View style={styles.stat}>
+                  <Text style={styles.statLabel}>30-DAY AVG</Text>
+                  <Text style={[styles.statValue, { color: moodColor(data.avgMood30) }]}>
+                    {moodLabel(data.avgMood30)}
+                  </Text>
+                  <Text style={styles.statSub}>{fmt(data.avgMood30)} / 4</Text>
+                </View>
+                <View style={styles.statDivider} />
+                <View style={styles.stat}>
+                  <Text style={styles.statLabel}>TREND</Text>
+                  <Text style={[styles.statValue, { color: trendColor(data.moodTrend) }]}>
+                    {trendIcon(data.moodTrend)}
+                  </Text>
+                  <Text style={styles.statSub}>{data.moodTrend}</Text>
                 </View>
               </View>
-            </>
-          )}
-
-          {/* Energy & Sleep */}
-          <Text style={styles.sectionLabel}>ENERGY & SLEEP (7-DAY)</Text>
-          <View style={styles.card}>
-            <View style={styles.statRow}>
-              <View style={styles.stat}>
-                <Text style={styles.statLabel}>ENERGY</Text>
-                <Text style={styles.statValue}>{fmt(data.avgEnergy7)}</Text>
-                <Text style={styles.statSub}>out of 4</Text>
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.stat}>
-                <Text style={styles.statLabel}>SLEEP</Text>
-                <Text style={styles.statValue}>{fmt(data.avgSleep7)}</Text>
-                <Text style={styles.statSub}>out of 4</Text>
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.stat}>
-                <Text style={styles.statLabel}>CHECK-INS</Text>
-                <Text style={styles.statValue}>{data.amEntries + data.pmEntries}</Text>
-                <Text style={styles.statSub}>{data.amEntries}AM · {data.pmEntries}PM</Text>
-              </View>
             </View>
-          </View>
 
-          {/* Triggers */}
-          {data.avgIntensity30 !== null && (
-            <>
-              <Text style={styles.sectionLabel}>TRIGGER PATTERNS (30-DAY)</Text>
-              <View style={styles.card}>
-                <View style={styles.statRow}>
-                  <View style={styles.stat}>
-                    <Text style={styles.statLabel}>AVG INTENSITY</Text>
-                    <Text style={[
-                      styles.statValue,
-                      { color: data.avgIntensity30 >= 7 ? '#A32D2D' : data.avgIntensity30 >= 4 ? '#C4722A' : '#1D9E75' }
-                    ]}>
-                      {fmt(data.avgIntensity30)}
-                    </Text>
-                    <Text style={styles.statSub}>out of 10</Text>
-                  </View>
-                  <View style={styles.statDivider} />
-                  <View style={styles.stat}>
-                    <Text style={styles.statLabel}>HIGH-INTENSITY</Text>
-                    <Text style={[styles.statValue, { color: data.highIntensityDays > 0 ? '#C4722A' : '#1D9E75' }]}>
-                      {data.highIntensityDays}
-                    </Text>
-                    <Text style={styles.statSub}>days (7+)</Text>
-                  </View>
-                </View>
-                {data.topTriggerWords.length > 0 && (
-                  <View style={styles.tagSection}>
-                    <Text style={styles.tagLabel}>RECURRING THEMES</Text>
-                    <View style={styles.tags}>
-                      {data.topTriggerWords.map(word => (
-                        <View key={word} style={styles.tag}>
-                          <Text style={styles.tagText}>{word}</Text>
-                        </View>
-                      ))}
+            {/* Best / Worst Days */}
+            {(data.bestDayOfWeek || data.worstDayOfWeek) && (
+              <>
+                <Text style={styles.sectionLabel}>DAY OF WEEK PATTERNS</Text>
+                <View style={styles.card}>
+                  <View style={styles.statRow}>
+                    <View style={styles.stat}>
+                      <Text style={styles.statLabel}>BEST DAY</Text>
+                      <Text style={[styles.statValue, { color: '#1D9E75', fontSize: 16 }]}>
+                        {data.bestDayOfWeek ?? '—'}
+                      </Text>
+                    </View>
+                    <View style={styles.statDivider} />
+                    <View style={styles.stat}>
+                      <Text style={styles.statLabel}>HARDEST DAY</Text>
+                      <Text style={[styles.statValue, { color: '#A32D2D', fontSize: 16 }]}>
+                        {data.worstDayOfWeek ?? '—'}
+                      </Text>
                     </View>
                   </View>
-                )}
-              </View>
-            </>
-          )}
+                </View>
+              </>
+            )}
 
-          {/* Grounding */}
-          <Text style={styles.sectionLabel}>CALM TOOLKIT (30-DAY)</Text>
-          <View style={styles.card}>
-            <View style={styles.statRow}>
-              <View style={styles.stat}>
-                <Text style={styles.statLabel}>SESSIONS</Text>
-                <Text style={[styles.statValue, { color: data.groundingSessions30 > 0 ? '#1D9E75' : '#888780' }]}>
-                  {data.groundingSessions30}
-                </Text>
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.stat}>
-                <Text style={styles.statLabel}>AVG DURATION</Text>
-                <Text style={styles.statValue}>
-                  {data.avgGroundingDuration !== null
-                    ? `${Math.round(data.avgGroundingDuration)}s`
-                    : '—'}
-                </Text>
+            {/* Energy & Sleep */}
+            <Text style={styles.sectionLabel}>ENERGY & SLEEP (7-DAY)</Text>
+            <View style={styles.card}>
+              <View style={styles.statRow}>
+                <View style={styles.stat}>
+                  <Text style={styles.statLabel}>ENERGY</Text>
+                  <Text style={styles.statValue}>{fmt(data.avgEnergy7)}</Text>
+                  <Text style={styles.statSub}>out of 4</Text>
+                </View>
+                <View style={styles.statDivider} />
+                <View style={styles.stat}>
+                  <Text style={styles.statLabel}>SLEEP</Text>
+                  <Text style={styles.statValue}>{fmt(data.avgSleep7)}</Text>
+                  <Text style={styles.statSub}>out of 4</Text>
+                </View>
+                <View style={styles.statDivider} />
+                <View style={styles.stat}>
+                  <Text style={styles.statLabel}>CHECK-INS</Text>
+                  <Text style={styles.statValue}>{data.amEntries + data.pmEntries}</Text>
+                  <Text style={styles.statSub}>{data.amEntries}AM · {data.pmEntries}PM</Text>
+                </View>
               </View>
             </View>
-          </View>
 
-          <Text style={styles.footer}>
-            All analysis runs on your device. Nothing is transmitted or stored externally.
-          </Text>
+            {/* Triggers */}
+            {data.avgIntensity30 !== null && (
+              <>
+                <Text style={styles.sectionLabel}>TRIGGER PATTERNS (30-DAY)</Text>
+                <View style={styles.card}>
+                  <View style={styles.statRow}>
+                    <View style={styles.stat}>
+                      <Text style={styles.statLabel}>AVG INTENSITY</Text>
+                      <Text style={[
+                        styles.statValue,
+                        { color: data.avgIntensity30 >= 7 ? '#A32D2D' : data.avgIntensity30 >= 4 ? '#C4722A' : '#1D9E75' }
+                      ]}>
+                        {fmt(data.avgIntensity30)}
+                      </Text>
+                      <Text style={styles.statSub}>out of 10</Text>
+                    </View>
+                    <View style={styles.statDivider} />
+                    <View style={styles.stat}>
+                      <Text style={styles.statLabel}>HIGH-INTENSITY</Text>
+                      <Text style={[styles.statValue, { color: data.highIntensityDays > 0 ? '#C4722A' : '#1D9E75' }]}>
+                        {data.highIntensityDays}
+                      </Text>
+                      <Text style={styles.statSub}>days (7+)</Text>
+                    </View>
+                  </View>
+                  {data.topTriggerWords.length > 0 && (
+                    <View style={styles.tagSection}>
+                      <Text style={styles.tagLabel}>RECURRING THEMES</Text>
+                      <View style={styles.tags}>
+                        {data.topTriggerWords.map(word => (
+                          <View key={word} style={styles.tag}>
+                            <Text style={styles.tagText}>{word}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    </View>
+                  )}
+                </View>
+              </>
+            )}
 
-        </ScrollView>
-      )}
-    </View>
+            {/* Grounding */}
+            <Text style={styles.sectionLabel}>CALM TOOLKIT (30-DAY)</Text>
+            <View style={styles.card}>
+              <View style={styles.statRow}>
+                <View style={styles.stat}>
+                  <Text style={styles.statLabel}>SESSIONS</Text>
+                  <Text style={[styles.statValue, { color: data.groundingSessions30 > 0 ? '#1D9E75' : '#888780' }]}>
+                    {data.groundingSessions30}
+                  </Text>
+                </View>
+                <View style={styles.statDivider} />
+                <View style={styles.stat}>
+                  <Text style={styles.statLabel}>AVG DURATION</Text>
+                  <Text style={styles.statValue}>
+                    {data.avgGroundingDuration !== null
+                      ? `${Math.round(data.avgGroundingDuration)}s`
+                      : '—'}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            <Text style={styles.footer}>
+              All analysis runs on your device. Nothing is transmitted or stored externally.
+            </Text>
+
+          </ScrollView>
+        )}
+      </View>
+    </PremiumGate>
   );
 }
 

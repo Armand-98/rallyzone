@@ -1,23 +1,24 @@
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import {
-    Alert,
-    FlatList,
-    KeyboardAvoidingView,
-    Platform,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { PremiumGate } from '../components/PremiumGate';
 import {
-    addVaultEntry,
-    authenticateVault,
-    deleteVaultEntry,
-    getVaultEntries,
-    VaultEntry,
+  addVaultEntry,
+  authenticateVault,
+  deleteVaultEntry,
+  getVaultEntries,
+  VaultEntry,
 } from '../hooks/useVault';
 
 export default function VaultScreen() {
@@ -88,71 +89,71 @@ export default function VaultScreen() {
     });
   };
 
-  if (!unlocked) {
-    return (
-      <View style={[styles.lockScreen, { paddingTop: insets.top }]}>
-        <Text style={styles.lockIcon}>🔒</Text>
-        <Text style={styles.lockTitle}>Secure Vault</Text>
-        <Text style={styles.lockSub}>Authenticating…</Text>
-      </View>
-    );
-  }
-
   return (
-    <KeyboardAvoidingView
-      style={[styles.container, { paddingTop: insets.top }]}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Text style={styles.backText}>← Back</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Secure Vault</Text>
-        <View style={{ width: 60 }} />
-      </View>
+    <PremiumGate fallbackLabel="Secure Vault is a premium feature. Your private entries are locked behind biometric auth and never leave your device.">
+      {!unlocked ? (
+        <View style={[styles.lockScreen, { paddingTop: insets.top }]}>
+          <Text style={styles.lockIcon}>🔒</Text>
+          <Text style={styles.lockTitle}>Secure Vault</Text>
+          <Text style={styles.lockSub}>Authenticating…</Text>
+        </View>
+      ) : (
+        <KeyboardAvoidingView
+          style={[styles.container, { paddingTop: insets.top }]}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+              <Text style={styles.backText}>← Back</Text>
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Secure Vault</Text>
+            <View style={{ width: 60 }} />
+          </View>
 
-      <FlatList
-        data={entries}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        ListEmptyComponent={
-          <View style={styles.empty}>
-            <Text style={styles.emptyText}>
-              Your vault is empty. Write something only you will see.
-            </Text>
-          </View>
-        }
-        ListHeaderComponent={
-          <View style={styles.inputCard}>
-            <TextInput
-              style={styles.input}
-              placeholder="Write something private…"
-              placeholderTextColor="#5F5E5A"
-              multiline
-              value={text}
-              onChangeText={setText}
-              textAlignVertical="top"
-            />
-            <TouchableOpacity
-              style={[styles.saveBtn, (!text.trim() || saving) && styles.saveBtnDisabled]}
-              onPress={handleSave}
-              disabled={!text.trim() || saving}
-            >
-              <Text style={styles.saveBtnText}>{saving ? 'Saving…' : 'Save to Vault'}</Text>
-            </TouchableOpacity>
-          </View>
-        }
-        renderItem={({ item }) => (
-          <View style={styles.entryCard}>
-            <Text style={styles.entryDate}>{formatDate(item.created_at)}</Text>
-            <Text style={styles.entryContent}>{item.content}</Text>
-            <TouchableOpacity style={styles.deleteBtn} onPress={() => handleDelete(item.id)}>
-              <Text style={styles.deleteText}>Delete</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      />
-    </KeyboardAvoidingView>
+          <FlatList
+            data={entries}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.list}
+            ListEmptyComponent={
+              <View style={styles.empty}>
+                <Text style={styles.emptyText}>
+                  Your vault is empty. Write something only you will see.
+                </Text>
+              </View>
+            }
+            ListHeaderComponent={
+              <View style={styles.inputCard}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Write something private…"
+                  placeholderTextColor="#5F5E5A"
+                  multiline
+                  value={text}
+                  onChangeText={setText}
+                  textAlignVertical="top"
+                />
+                <TouchableOpacity
+                  style={[styles.saveBtn, (!text.trim() || saving) && styles.saveBtnDisabled]}
+                  onPress={handleSave}
+                  disabled={!text.trim() || saving}
+                >
+                  <Text style={styles.saveBtnText}>{saving ? 'Saving…' : 'Save to Vault'}</Text>
+                </TouchableOpacity>
+              </View>
+            }
+            renderItem={({ item }) => (
+              <View style={styles.entryCard}>
+                <Text style={styles.entryDate}>{formatDate(item.created_at)}</Text>
+                <Text style={styles.entryContent}>{item.content}</Text>
+                <TouchableOpacity style={styles.deleteBtn} onPress={() => handleDelete(item.id)}>
+                  <Text style={styles.deleteText}>Delete</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          />
+        </KeyboardAvoidingView>
+      )}
+    </PremiumGate>
   );
 }
 

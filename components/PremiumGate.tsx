@@ -1,9 +1,6 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { COLORS } from '../constants/colors';
-import { SPACING } from '../constants/spacing';
-import { TYPOGRAPHY } from '../constants/typography';
 import { useRevenueCat } from '../hooks/useRevenueCat';
 
 interface Props {
@@ -37,27 +34,29 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: SPACING.xl,
-    gap: SPACING.md,
+    padding: 32,
+    gap: 16,
+    backgroundColor: '#111110',
   },
   lock: {
     fontSize: 40,
   },
   label: {
-    ...TYPOGRAPHY.body,
-    color: COLORS.textSecondary,
+    fontSize: 14,
+    lineHeight: 22,
+    color: '#888780',
     textAlign: 'center',
   },
   btn: {
-    backgroundColor: COLORS.primary,
-    paddingVertical: SPACING.sm,
-    paddingHorizontal: SPACING.xl,
+    backgroundColor: '#1D9E75',
+    paddingVertical: 10,
+    paddingHorizontal: 32,
     borderRadius: 10,
-    marginTop: SPACING.sm,
+    marginTop: 8,
   },
   btnText: {
-    ...TYPOGRAPHY.label,
-    color: '#fff',
+    fontSize: 13,
     fontWeight: '600',
+    color: '#fff',
   },
 });
