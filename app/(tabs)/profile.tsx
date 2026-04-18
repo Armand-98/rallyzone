@@ -18,11 +18,11 @@ type Role = 'veteran' | 'first_responder';
 const PRIVACY_URL = 'https://armand-98.github.io/rallyzone';
 
 export default function ProfileScreen() {
-  const [callSign,      setCallSign]      = useState('');
-  const [role,          setRole]          = useState<Role>('veteran');
-  const [editingName,   setEditingName]   = useState(false);
-  const [nameInput,     setNameInput]     = useState('');
-  const [saved,         setSaved]         = useState(false);
+  const [callSign,    setCallSign]    = useState('');
+  const [role,        setRole]        = useState<Role>('veteran');
+  const [editingName, setEditingName] = useState(false);
+  const [nameInput,   setNameInput]   = useState('');
+  const [saved,       setSaved]       = useState(false);
 
   useEffect(() => {
     getPref('call_sign').then(v => { setCallSign(v ?? ''); setNameInput(v ?? ''); });
@@ -152,23 +152,57 @@ export default function ProfileScreen() {
           </View>
         </View>
 
+        {/* Premium */}
+        <View style={s.section}>
+          <Text style={s.sectionLabel}>PREMIUM</Text>
+          <View style={s.card}>
+            <TouchableOpacity
+              style={[s.aboutRow, s.aboutRowBorder]}
+              onPress={() => router.push('/vault')}
+              activeOpacity={0.7}
+            >
+              <View style={s.premiumRowLeft}>
+                <Text style={s.premiumIcon}>🔒</Text>
+                <View>
+                  <Text style={s.premiumLabel}>Secure Vault</Text>
+                  <Text style={s.premiumDesc}>Biometric-locked private journal</Text>
+                </View>
+              </View>
+              <Text style={s.linkValue}>Open ↗</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={s.aboutRow}
+              onPress={() => router.push('/paywall')}
+              activeOpacity={0.7}
+            >
+              <View style={s.premiumRowLeft}>
+                <Text style={s.premiumIcon}>⭐</Text>
+                <View>
+                  <Text style={s.premiumLabel}>Upgrade to Premium</Text>
+                  <Text style={s.premiumDesc}>$7.99/mo · $59.99/yr</Text>
+                </View>
+              </View>
+              <Text style={s.linkValue}>View ↗</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
         {/* About */}
         <View style={s.section}>
           <Text style={s.sectionLabel}>ABOUT</Text>
           <View style={s.card}>
             {[
-              { label: 'App',      value: 'RallyZone' },
-              { label: 'Version',  value: '0.1.0 · Beta' },
-              { label: 'Made by',  value: 'LyfieldCreationsOS' },
-              { label: 'Storage',  value: 'Local only — nothing leaves your device' },
-            ].map((item, i) => (
+              { label: 'App',     value: 'RallyZone' },
+              { label: 'Version', value: '0.1.0 · Beta' },
+              { label: 'Made by', value: 'LyfieldCreationsOS' },
+              { label: 'Storage', value: 'Local only — nothing leaves your device' },
+            ].map((item) => (
               <View key={item.label} style={[s.aboutRow, s.aboutRowBorder]}>
                 <Text style={s.aboutLabel}>{item.label}</Text>
                 <Text style={s.aboutValue}>{item.value}</Text>
               </View>
             ))}
-
-            {/* Privacy Policy row */}
             <TouchableOpacity
               style={s.aboutRow}
               onPress={() => router.push('/privacy')}
@@ -238,6 +272,10 @@ const s = StyleSheet.create({
   radio:          { width: 20, height: 20, borderRadius: 10, borderWidth: 1.5, borderColor: '#3A3A36', justifyContent: 'center', alignItems: 'center' },
   radioOn:        { borderColor: '#5B8A5F' },
   radioDot:       { width: 10, height: 10, borderRadius: 5, backgroundColor: '#5B8A5F' },
+  premiumRowLeft: { flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 },
+  premiumIcon:    { fontSize: 20 },
+  premiumLabel:   { fontSize: 13, color: '#F0EFE8', fontWeight: '600', marginBottom: 2 },
+  premiumDesc:    { fontSize: 11, color: '#3A3A36' },
   aboutRow:       { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 14, paddingHorizontal: 16 },
   aboutRowBorder: { borderBottomWidth: 1, borderBottomColor: '#252523' },
   aboutLabel:     { fontSize: 13, color: '#3A3A36' },

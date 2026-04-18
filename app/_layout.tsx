@@ -1,44 +1,61 @@
-import { Slot, router, useRootNavigationState } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { Slot, useRouter } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { initDB } from '../db/index';
-import { getPref, initPrefsTable } from '../db/prefs';
+import { initDB } from '../db';
+import { getPref } from '../db/prefs';
+import { initRevenueCat } from '../hooks/useRevenueCat';
 
 export default function RootLayout() {
-  const navState = useRootNavigationState();
-  const [onboardingDone, setOnboardingDone] = useState<boolean | null>(null);
+  const router = useRouter();
+  const [ready, setReady] = useState(false);
+  const [routeReady, setRouteReady] = useState(false);
+  const initialized = useRef(false);
 
+  // Slot must render first before we can navigate
   useEffect(() => {
-    (async () => {
-      try {
-        await initDB();
-        await initPrefsTable();
-        const done = await getPref('onboarding_complete');
-        setOnboardingDone(done === 'true');
-      } catch (e) {
-        console.error('Boot error:', e);
-        setOnboardingDone(false);
-      }
-    })();
+    const timer = setTimeout(() => setRouteReady(true), 100);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
-    if (!navState?.key || onboardingDone === null) return;
-    router.replace(onboardingDone ? '/(tabs)' : '/onboarding');
-  }, [navState?.key, onboardingDone]);
+    if (!routeReady) return;
+    if (initialized.current) return;
+    initialized.current = true;
 
-  const ready = navState?.key && onboardingDone !== null;
+    const boot = async () => {
+      try {
+        await initDB();
+        initRevenueCat();
+        const done = await getPref('onboarding_complete');
+        if (done === 'true') {
+          router.replace('/(tabs)');
+        } else {
+          router.replace('/onboarding');
+        }
+      } catch (e) {
+        console.error('Boot error:', e);
+        router.replace('/onboarding');
+      } finally {
+        setReady(true);
+      }
+    };
+    boot();
+  }, [routeReady]);
 
   return (
-    <SafeAreaProvider>
-      {!ready ? (
-        <View style={{ flex: 1, backgroundColor: '#111110', justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator color="#5B8A5F" size="large" />
+    <>
+      <Slot />
+      {!ready && (
+        <View style={{
+          position: 'absolute',
+          top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: '#111110',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <ActivityIndicator color="#1D9E75" />
         </View>
-      ) : (
-        <Slot />
       )}
-    </SafeAreaProvider>
+    </>
   );
 }
