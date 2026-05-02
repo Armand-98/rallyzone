@@ -7,47 +7,48 @@
     "icon": "./assets/images/icon.png",
     "scheme": "rallyzone",
     "userInterfaceStyle": "dark",
-    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#111110"
+    },
     "ios": {
+      "bundleIdentifier": "com.lyfield.rallyzone",
+      "buildNumber": "1",
       "supportsTablet": false,
-      "bundleIdentifier": "com.lyfield.rallyzone"
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "RallyZone uses Face ID to protect your Secure Vault.",
+        "NSCameraUsageDescription": "RallyZone does not use the camera.",
+        "NSPhotoLibraryUsageDescription": "RallyZone does not access your photo library.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#111110"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "package": "com.lyfield.rallyzone"
-    },
-    "web": {
-      "output": "static",
-      "favicon": "./assets/images/icon.png"
+      "package": "com.lyfield.rallyzone",
+      "permissions": [
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
+      ]
     },
     "plugins": [
       "expo-router",
+      "expo-sqlite",
       [
-        "expo-splash-screen",
+        "expo-local-authentication",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 280,
-          "resizeMode": "contain",
-          "backgroundColor": "#111110",
-          "dark": {
-            "backgroundColor": "#111110"
-          }
+          "faceIDPermission": "RallyZone uses Face ID to protect your Secure Vault."
         }
       ],
-      "expo-sqlite",
       "expo-secure-store"
     ],
     "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
+      "typedRoutes": true
     },
     "extra": {
-      "router": {},
       "eas": {
         "projectId": "e63ad189-0a01-40c3-b59e-2564aa8750a2"
       }
