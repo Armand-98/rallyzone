@@ -63,3 +63,7 @@ export async function deleteVaultEntry(id: string): Promise<void> {
   const existing = await getIndex();
   await saveIndex(existing.filter((e) => e.id !== id));
 }
+
+export async function wipeVault(): Promise<void> {
+  await SecureStore.deleteItemAsync(INDEX_KEY);
+}

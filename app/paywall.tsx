@@ -75,13 +75,13 @@ export default function PaywallScreen() {
       {/* Explicit header with close button */}
       <View style={styles.header}>
         <View style={{ width: 44 }} />
-        <Text style={styles.headerTitle}>RallyZone Premium</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>RallyZone Premium</Text>
         <TouchableOpacity
           style={styles.closeBtn}
           onPress={() => router.back()}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Text style={styles.closeText}>✕</Text>
+          <Text style={styles.closeText} maxFontSizeMultiplier={1.3}>✕</Text>
         </TouchableOpacity>
       </View>
 
@@ -165,7 +165,7 @@ export default function PaywallScreen() {
 const styles = StyleSheet.create({
   container:         { flex: 1, backgroundColor: '#111110' },
   header:            { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#1A1A18' },
-  headerTitle:       { fontSize: 14, fontWeight: '600', color: '#888780' },
+  headerTitle:       { flex: 1, textAlign: 'center', fontSize: 14, fontWeight: '600', color: '#888780' },
   closeBtn:          { width: 44, height: 44, alignItems: 'center', justifyContent: 'center', backgroundColor: '#1A1A18', borderRadius: 22 },
   closeText:         { color: '#F0EFE8', fontSize: 16, fontWeight: '600' },
   scroll:            { padding: 20, paddingBottom: 64 },

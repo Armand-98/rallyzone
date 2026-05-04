@@ -66,9 +66,9 @@ export default function InsightsScreen() {
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-            <Text style={styles.backText}>← Back</Text>
+            <Text style={styles.backText} maxFontSizeMultiplier={1.3}>← Back</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Pattern Insights</Text>
+          <Text style={styles.headerTitle} numberOfLines={1}>Pattern Insights</Text>
           <View style={{ width: 60 }} />
         </View>
 
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   header:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#1A1A18' },
   backBtn:      { width: 60 },
   backText:     { color: '#1D9E75', fontSize: 14 },
-  headerTitle:  { fontSize: 16, fontWeight: '600', color: '#F0EFE8' },
+  headerTitle:  { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '600', color: '#F0EFE8' },
   loading:      { flex: 1, alignItems: 'center', justifyContent: 'center' },
   empty:        { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40, gap: 12 },
   emptyIcon:    { fontSize: 48 },

@@ -104,9 +104,9 @@ export default function VaultScreen() {
         >
           <View style={styles.header}>
             <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-              <Text style={styles.backText}>← Back</Text>
+              <Text style={styles.backText} maxFontSizeMultiplier={1.3}>← Back</Text>
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>Secure Vault</Text>
+            <Text style={styles.headerTitle} numberOfLines={1}>Secure Vault</Text>
             <View style={{ width: 60 }} />
           </View>
 
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   header:          { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#1A1A18' },
   backBtn:         { width: 60 },
   backText:        { color: '#1D9E75', fontSize: 14 },
-  headerTitle:     { fontSize: 16, fontWeight: '600', color: '#F0EFE8' },
+  headerTitle:     { flex: 1, textAlign: 'center', fontSize: 16, fontWeight: '600', color: '#F0EFE8' },
   list:            { padding: 20, gap: 12 },
   inputCard:       { backgroundColor: '#1A1A18', borderRadius: 14, padding: 14, marginBottom: 12, gap: 10 },
   input:           { color: '#F0EFE8', fontSize: 14, lineHeight: 22, minHeight: 100 },

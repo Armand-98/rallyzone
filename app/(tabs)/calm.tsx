@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type Tool = null | 'breathing' | 'grounding';
 
@@ -11,6 +11,7 @@ const PHASES = [
 ];
 
 function BreathingTool({ onClose }: { onClose: () => void }) {
+  const insets = useSafeAreaInsets();
   const [running,    setRunning]    = useState(false);
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [count,      setCount]      = useState(PHASES[0].duration);
@@ -45,9 +46,9 @@ function BreathingTool({ onClose }: { onClose: () => void }) {
   useEffect(() => { return clear; }, []);
 
   return (
-    <View style={bt.wrap}>
+    <View style={[bt.wrap, { paddingTop: insets.top + 20 }]}>
       <TouchableOpacity style={bt.back} onPress={() => { stop(); onClose(); }} activeOpacity={0.7}>
-        <Text style={bt.backText}>← BACK</Text>
+        <Text style={bt.backText} maxFontSizeMultiplier={1.3}>← BACK</Text>
       </TouchableOpacity>
       <Text style={bt.title}>4-7-8 BREATHING</Text>
       <Text style={bt.sub}>A proven technique to reduce acute stress and anxiety.</Text>
@@ -87,13 +88,14 @@ const SENSES = [
 ];
 
 function GroundingTool({ onClose }: { onClose: () => void }) {
+  const insets = useSafeAreaInsets();
   const [step, setStep] = useState(0);
   const done = step >= SENSES.length;
 
   return (
-    <View style={gt.wrap}>
+    <View style={[gt.wrap, { paddingTop: insets.top + 20 }]}>
       <TouchableOpacity style={gt.back} onPress={onClose} activeOpacity={0.7}>
-        <Text style={gt.backText}>← BACK</Text>
+        <Text style={gt.backText} maxFontSizeMultiplier={1.3}>← BACK</Text>
       </TouchableOpacity>
       <Text style={gt.title}>5-4-3-2-1 GROUNDING</Text>
       <Text style={gt.sub}>Reconnect with your environment. Take your time with each step.</Text>
@@ -197,7 +199,7 @@ const s = StyleSheet.create({
 });
 
 const bt = StyleSheet.create({
-  wrap:      { flex: 1, backgroundColor: '#111110', paddingHorizontal: 24, paddingTop: 56, paddingBottom: 40 },
+  wrap:      { flex: 1, backgroundColor: '#111110', paddingHorizontal: 24, paddingBottom: 40 },
   back:      { marginBottom: 24 },
   backText:  { color: '#3A3A36', fontSize: 12, fontWeight: '600', letterSpacing: 0.5 },
   title:     { fontSize: 18, fontWeight: '800', color: '#F0EFE8', marginBottom: 6 },
@@ -218,7 +220,7 @@ const bt = StyleSheet.create({
 });
 
 const gt = StyleSheet.create({
-  wrap:          { flex: 1, backgroundColor: '#111110', paddingHorizontal: 24, paddingTop: 56, paddingBottom: 40 },
+  wrap:          { flex: 1, backgroundColor: '#111110', paddingHorizontal: 24, paddingBottom: 40 },
   back:          { marginBottom: 24 },
   backText:      { color: '#3A3A36', fontSize: 12, fontWeight: '600', letterSpacing: 0.5 },
   title:         { fontSize: 18, fontWeight: '800', color: '#F0EFE8', marginBottom: 6 },
