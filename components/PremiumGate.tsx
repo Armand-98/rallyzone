@@ -17,11 +17,16 @@ export function PremiumGate({ children, fallbackLabel = 'This is a premium featu
   if (!isPremium) {
     return (
       <View style={styles.container}>
-        <Text style={styles.lock}>🔒</Text>
-        <Text style={styles.label}>{fallbackLabel}</Text>
-        <TouchableOpacity style={styles.btn} onPress={() => router.push('/paywall')}>
-          <Text style={styles.btnText}>Unlock Premium</Text>
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
+          <Text style={styles.backText} maxFontSizeMultiplier={1.3}>← Back</Text>
         </TouchableOpacity>
+        <View style={styles.body}>
+          <Text style={styles.lock}>🔒</Text>
+          <Text style={styles.label}>{fallbackLabel}</Text>
+          <TouchableOpacity style={styles.btn} onPress={() => router.push('/paywall')}>
+            <Text style={styles.btnText}>Unlock Premium</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -32,11 +37,25 @@ export function PremiumGate({ children, fallbackLabel = 'This is a premium featu
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#111110',
+  },
+  backBtn: {
+    position: 'absolute',
+    top: 56,
+    left: 20,
+    zIndex: 10,
+    padding: 8,
+  },
+  backText: {
+    color: '#1D9E75',
+    fontSize: 14,
+  },
+  body: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 32,
     gap: 16,
-    backgroundColor: '#111110',
   },
   lock: {
     fontSize: 40,
