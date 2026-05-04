@@ -11,6 +11,16 @@ export function getDB(): Promise<SQLite.SQLiteDatabase> {
   return dbPromise;
 }
 
+export async function wipeAllData(): Promise<void> {
+  const db = await getDB();
+  await db.execAsync(`
+    DELETE FROM mood_entries;
+    DELETE FROM trigger_logs;
+    DELETE FROM grounding_sessions;
+    DELETE FROM prefs;
+  `);
+}
+
 // ─── Migrations ───────────────────────────────────────────────────────────────
 // Each migration runs ONCE when the DB version is below its index.
 // To add a new migration: append to this array and bump nothing else.

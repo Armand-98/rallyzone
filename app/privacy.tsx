@@ -24,10 +24,10 @@ export default function PrivacyScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backBtn} hitSlop={12}>
-          <Text style={styles.backArrow}>←</Text>
-          <Text style={styles.backLabel}>Back</Text>
+          <Text style={styles.backArrow} maxFontSizeMultiplier={1.3}>←</Text>
+          <Text style={styles.backLabel} maxFontSizeMultiplier={1.3}>Back</Text>
         </Pressable>
-        <Text style={styles.headerTitle}>Privacy Policy</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>Privacy Policy</Text>
         <View style={{ width: 64 }} />
       </View>
 
@@ -169,6 +169,8 @@ const styles = StyleSheet.create({
     color: Colors.primary,
   },
   headerTitle: {
+    flex: 1,
+    textAlign: 'center',
     ...Typography.labelMedium,
     color: Colors.textPrimary,
   },

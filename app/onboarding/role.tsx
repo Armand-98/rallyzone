@@ -2,8 +2,9 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { setPref } from '../../db/prefs';
 
-type Role = 'veteran' | 'first_responder' | null;
+type Role = 'veteran' | 'active_military' | null;
 
 function Dots({ step }: { step: number }) {
   return (
@@ -17,10 +18,16 @@ function Dots({ step }: { step: number }) {
 
 export default function RoleScreen() {
   const { callSign } = useLocalSearchParams<{ callSign: string }>();
-  const [role, setRole] = useState<Role>(null);
+  const [role,     setRole]     = useState<Role>(null);
+  const [attested, setAttested] = useState(false);
+
+  function selectRole(r: Role) {
+    setRole(r);
+    setAttested(false); // reset attestation if they switch
+  }
 
   function next() {
-    if (!role) return;
+    if (!role || !attested) return;
     router.push({ pathname: '/onboarding/privacy', params: { callSign, role } });
   }
 
@@ -39,15 +46,15 @@ export default function RoleScreen() {
 
           <View style={s.cards}>
             {([
-              { key: 'veteran',         label: 'VETERAN',         desc: 'Military service, past or present' },
-              { key: 'first_responder', label: 'FIRST RESPONDER', desc: 'Law enforcement, fire, EMS, dispatch' },
+              { key: 'veteran',         label: 'VETERAN',          desc: 'Military service, past or present' },
+              { key: 'active_military', label: 'CURRENTLY SERVING', desc: 'Currently serving in the U.S. Military' },
             ] as { key: Role; label: string; desc: string }[]).map(opt => {
               const selected = role === opt.key;
               return (
                 <TouchableOpacity
                   key={opt.key!}
                   style={[s.card, selected && s.cardOn]}
-                  onPress={() => setRole(opt.key)}
+                  onPress={() => selectRole(opt.key)}
                   activeOpacity={0.8}
                 >
                   <Text style={[s.cardLabel, selected && s.cardLabelOn]}>{opt.label}</Text>
@@ -58,13 +65,31 @@ export default function RoleScreen() {
             })}
           </View>
 
-          <Text style={s.footnote}>You can update this anytime in your profile.</Text>
+          {/* Self-attestation — only shown after a selection is made */}
+          {role !== null && (
+            <TouchableOpacity
+              style={[s.attestRow, attested && s.attestRowOn]}
+              onPress={() => setAttested(v => !v)}
+              activeOpacity={0.8}
+            >
+              <View style={[s.checkbox, attested && s.checkboxOn]}>
+                {attested && <Text style={s.checkmark}>✓</Text>}
+              </View>
+              <Text style={s.attestText}>
+                I confirm I am a{' '}
+                <Text style={s.attestBold}>
+                  {role === 'veteran' ? 'U.S. Veteran' : 'Currently Serving Member of the U.S. Military'}
+                </Text>
+                . I understand this cannot be changed without resetting the app and erasing all data.
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <TouchableOpacity
-          style={[s.btn, !role && s.btnOff]}
+          style={[s.btn, (!role || !attested) && s.btnOff]}
           onPress={next}
-          disabled={!role}
+          disabled={!role || !attested}
           activeOpacity={0.8}
         >
           <Text style={s.btnText}>CONFIRMED</Text>
@@ -91,7 +116,13 @@ const s = StyleSheet.create({
   cardLabelOn: { color: '#F0EFE8' },
   cardDesc:    { fontSize: 13, color: '#3A3A36' },
   pip:         { position: 'absolute', top: 18, right: 18, width: 10, height: 10, borderRadius: 5, backgroundColor: '#5B8A5F' },
-  footnote:    { fontSize: 12, color: '#2E2E2B', textAlign: 'center' },
+  attestRow:    { flexDirection: 'row', alignItems: 'flex-start', gap: 12, backgroundColor: '#161614', borderRadius: 10, borderWidth: 1, borderColor: '#252523', padding: 14, marginTop: 4 },
+  attestRowOn:  { borderColor: '#5B8A5F', backgroundColor: '#111A12' },
+  checkbox:     { width: 22, height: 22, borderRadius: 5, borderWidth: 1.5, borderColor: '#3A3A36', alignItems: 'center', justifyContent: 'center', marginTop: 1, flexShrink: 0 },
+  checkboxOn:   { backgroundColor: '#5B8A5F', borderColor: '#5B8A5F' },
+  checkmark:    { color: '#fff', fontSize: 13, fontWeight: '700' },
+  attestText:   { flex: 1, fontSize: 12, color: '#5A5A54', lineHeight: 18 },
+  attestBold:   { color: '#F0EFE8', fontWeight: '700' },
   btn:         { backgroundColor: '#5B8A5F', borderRadius: 10, paddingVertical: 18, alignItems: 'center', marginBottom: 8 },
   btnOff:      { backgroundColor: '#1A2A1C' },
   btnText:     { color: '#fff', fontSize: 15, fontWeight: '700', letterSpacing: 1.2 },
