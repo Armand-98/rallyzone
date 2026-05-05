@@ -14,7 +14,7 @@
     },
     "ios": {
       "bundleIdentifier": "com.lyfield.rallyzone",
-      "buildNumber": "3",
+      "buildNumber": "5",
       "supportsTablet": false,
       "infoPlist": {
         "NSFaceIDUsageDescription": "RallyZone uses Face ID to protect your Secure Vault.",
