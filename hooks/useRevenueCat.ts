@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import Purchases, { CustomerInfo, LOG_LEVEL } from 'react-native-purchases';
-import { REVENUECAT_GOOGLE_API_KEY } from '../constants/keys';
+import { Platform } from 'react-native';
+import { REVENUECAT_GOOGLE_API_KEY, REVENUECAT_APPLE_API_KEY } from '../constants/keys';
 
 export const ENTITLEMENT_ID = 'premium';
 
 export function initRevenueCat() {
   Purchases.setLogLevel(LOG_LEVEL.DEBUG);
-  Purchases.configure({ apiKey: REVENUECAT_GOOGLE_API_KEY });
+  const apiKey = Platform.OS === 'ios' ? REVENUECAT_APPLE_API_KEY : REVENUECAT_GOOGLE_API_KEY;
+  Purchases.configure({ apiKey });
 }
 
 export function useRevenueCat() {
