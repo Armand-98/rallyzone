@@ -33,7 +33,7 @@ export default function RootLayout() {
           router.replace('/onboarding');
         }
       } catch (e) {
-        console.error('Boot error:', e);
+        if (__DEV__) console.error('Boot error:', e);
         router.replace('/onboarding');
       } finally {
         setReady(true);

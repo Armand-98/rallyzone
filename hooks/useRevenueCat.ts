@@ -6,7 +6,7 @@ import { REVENUECAT_GOOGLE_API_KEY, REVENUECAT_APPLE_API_KEY } from '../constant
 export const ENTITLEMENT_ID = 'premium';
 
 export function initRevenueCat() {
-  Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+  if (__DEV__) Purchases.setLogLevel(LOG_LEVEL.DEBUG);
   const apiKey = Platform.OS === 'ios' ? REVENUECAT_APPLE_API_KEY : REVENUECAT_GOOGLE_API_KEY;
   Purchases.configure({
     apiKey,
@@ -28,7 +28,7 @@ export function useRevenueCat() {
           typeof info.entitlements.active[ENTITLEMENT_ID] !== 'undefined'
         );
       } catch (e) {
-        console.log('RevenueCat load error:', e);
+        if (__DEV__) console.log('RevenueCat load error:', e);
       } finally {
         setLoading(false);
       }
