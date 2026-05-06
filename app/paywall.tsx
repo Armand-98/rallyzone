@@ -154,7 +154,7 @@ export default function PaywallScreen() {
 
         <Text style={styles.legal}>
           Subscriptions auto-renew unless cancelled at least 24 hours before the end of the current period.
-          Manage or cancel anytime in Google Play settings. No refunds for partial periods.
+          Manage or cancel anytime in your device's subscription settings. No refunds for partial periods.
         </Text>
 
       </ScrollView>
