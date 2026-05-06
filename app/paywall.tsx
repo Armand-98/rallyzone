@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
+import { ENTITLEMENT_ID } from '../hooks/useRevenueCat';
 import {
   ActivityIndicator,
   Alert,
@@ -55,7 +56,7 @@ export default function PaywallScreen() {
     setLoading(true);
     try {
       const info = await Purchases.restorePurchases();
-      const active = info.entitlements.active['premium'];
+      const active = info.entitlements.active[ENTITLEMENT_ID];
       if (active) {
         Alert.alert('Restored', 'Your premium subscription has been restored.');
         router.back();
