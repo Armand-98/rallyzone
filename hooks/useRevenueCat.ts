@@ -24,6 +24,7 @@ export function useRevenueCat() {
         setIsPremium(
           typeof info.entitlements.active[ENTITLEMENT_ID] !== 'undefined'
         );
+        Alert.alert('RC OK', `ID: ${info.originalAppUserId}\nPremium: ${typeof info.entitlements.active[ENTITLEMENT_ID] !== 'undefined'}`);
       } catch (e: any) {
         Alert.alert('RC Error', e?.message ?? JSON.stringify(e));
       } finally {
