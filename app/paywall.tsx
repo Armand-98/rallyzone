@@ -4,6 +4,7 @@ import { ENTITLEMENT_ID } from '../hooks/useRevenueCat';
 import {
   ActivityIndicator,
   Alert,
+  Linking,
   ScrollView,
   StyleSheet,
   Text,
@@ -153,6 +154,16 @@ export default function PaywallScreen() {
           <Text style={styles.restoreText}>Restore purchases</Text>
         </TouchableOpacity>
 
+        <View style={styles.links}>
+          <TouchableOpacity onPress={() => Linking.openURL('https://armand-98.github.io/rallyzone/')}>
+            <Text style={styles.linkText}>Privacy Policy</Text>
+          </TouchableOpacity>
+          <Text style={styles.linkSep}>·</Text>
+          <TouchableOpacity onPress={() => Linking.openURL('https://www.apple.com/legal/internet-services/itunes/dev/stdeula/')}>
+            <Text style={styles.linkText}>Terms of Use</Text>
+          </TouchableOpacity>
+        </View>
+
         <Text style={styles.legal}>
           Subscriptions auto-renew unless cancelled at least 24 hours before the end of the current period.
           Manage or cancel anytime in your device's subscription settings. No refunds for partial periods.
@@ -195,7 +206,10 @@ const styles = StyleSheet.create({
   cta:               { backgroundColor: '#1D9E75', borderRadius: 14, paddingVertical: 16, alignItems: 'center', marginBottom: 12 },
   ctaDisabled:       { opacity: 0.6 },
   ctaText:           { color: '#fff', fontSize: 16, fontWeight: '700' },
-  restoreBtn:        { alignItems: 'center', paddingVertical: 10, marginBottom: 20 },
+  restoreBtn:        { alignItems: 'center', paddingVertical: 10, marginBottom: 12 },
   restoreText:       { color: '#888780', fontSize: 13 },
+  links:             { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 8, marginBottom: 16 },
+  linkText:          { fontSize: 11, color: '#888780', textDecorationLine: 'underline' },
+  linkSep:           { fontSize: 11, color: '#3A3A36' },
   legal:             { fontSize: 10, color: '#3A3A36', lineHeight: 16, textAlign: 'center' },
 });

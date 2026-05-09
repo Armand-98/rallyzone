@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Purchases, { CustomerInfo, LOG_LEVEL } from 'react-native-purchases';
-import { Alert, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { REVENUECAT_GOOGLE_API_KEY, REVENUECAT_APPLE_API_KEY } from '../constants/keys';
 
 export const ENTITLEMENT_ID = 'premium';
@@ -24,9 +24,8 @@ export function useRevenueCat() {
         setIsPremium(
           typeof info.entitlements.active[ENTITLEMENT_ID] !== 'undefined'
         );
-        Alert.alert('RC OK', `ID: ${info.originalAppUserId}\nPremium: ${typeof info.entitlements.active[ENTITLEMENT_ID] !== 'undefined'}`);
       } catch (e: any) {
-        Alert.alert('RC Error', e?.message ?? JSON.stringify(e));
+        if (__DEV__) console.error('RC Error:', e);
       } finally {
         setLoading(false);
       }
