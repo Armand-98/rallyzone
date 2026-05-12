@@ -2,7 +2,7 @@
   "expo": {
     "name": "RallyZone",
     "slug": "rallyzone",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "rallyzone",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "bundleIdentifier": "com.lyfield.rallyzone",
-      "buildNumber": "5",
+      "buildNumber": "14",
       "supportsTablet": false,
       "infoPlist": {
         "NSFaceIDUsageDescription": "RallyZone uses Face ID to protect your Secure Vault.",

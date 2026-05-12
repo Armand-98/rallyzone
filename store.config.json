@@ -1,0 +1,32 @@
+{
+  "configVersion": 0,
+  "apple": {
+    "info": {
+      "en-US": {
+        "title": "RallyZone",
+        "subtitle": "Mental Fitness for Veterans",
+        "description": "RallyZone is a mental performance and emotional regulation tool built for veterans and high-stress individuals who want practical tools — not another wellness app.\n\nTrack your mental readiness with daily Morning and Evening Briefs. Log mood, energy, and sleep with a quick check-in and see 30-day patterns at a glance on your heatmap.\n\nCORE FEATURES\n\n• Morning & Evening Brief — Daily mood, energy, and sleep check-in. See your 30-day history on a color-coded heatmap.\n\n• Trigger Log — Record events, reactions, and intensity levels. Capture optional reflections to understand what's driving your stress response.\n\n• Calm Tools — Practical grounding and regulation techniques for high-stress moments.\n\n• Pattern Insights (Premium) — Aggregate analytics across your mood and trigger logs to identify recurring patterns over time.\n\n• Secure Vault (Premium) — Biometric-locked private notes protected with Face ID or fingerprint. No cloud, no risk.\n\n• PDF Export (Premium) — Generate 30, 60, or 90-day reports with your call sign for sharing with a provider or counselor.\n\nBUILT FOR OPERATORS\n\nRallyZone is designed for veterans who operate under pressure and need to track their mental state without the fluff.\n\nPrivacy-first. Your data stays on your device. No accounts required.",
+        "keywords": [
+          "veterans",
+          "mental health",
+          "mood tracker",
+          "stress",
+          "anxiety",
+          "emotional regulation",
+          "calm",
+          "resilience"
+        ],
+        "supportUrl": "https://armand-98.github.io/rallyzone",
+        "privacyPolicyUrl": "https://armand-98.github.io/rallyzone/privacy-policy.html"
+      }
+    },
+    "categories": ["PRODUCTIVITY", "LIFESTYLE"],
+    "review": {
+      "firstName": "Armand",
+      "lastName": "Zavala",
+      "phone": "+1-951-455-9017",
+      "email": "ArmandZavala98@icloud.com",
+      "notes": "RallyZone is a mental performance tracking app. No login required — all data is stored locally on device. Premium features (Vault, Insights, PDF Export) require a subscription and are gated behind biometric authentication or a RevenueCat paywall. To test premium: use the restore purchases flow or contact the developer for a test account."
+    }
+  }
+}
