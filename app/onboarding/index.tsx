@@ -31,7 +31,7 @@ export default function WelcomeScreen() {
           </Text>
 
           <Text style={s.detail}>
-            Built for veterans and first responders. No account required. No data sold. Everything stays on your device.
+            Built exclusively for veterans. No account required. No data sold. Everything stays on your device.
           </Text>
         </View>
 

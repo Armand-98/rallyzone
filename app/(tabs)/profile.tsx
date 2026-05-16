@@ -11,8 +11,10 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import CoachMark from '../../components/CoachMark';
 import { wipeAllData } from '../../db';
 import { getPref, setPref } from '../../db/prefs';
+import { useTutorial } from '../../hooks/useTutorial';
 import { wipeVault } from '../../hooks/useVault';
 
 type Role = 'veteran' | 'active_military';
@@ -21,6 +23,7 @@ const PRIVACY_URL   = 'https://armand-98.github.io/rallyzone';
 const PENDING_MS    = 48 * 60 * 60 * 1000; // 48 hours
 
 export default function ProfileScreen() {
+  const { show: showTutorial, dismiss: dismissTutorial } = useTutorial('tutorial_profile_seen');
   const [callSign,    setCallSign]    = useState('');
   const [role,        setRole]        = useState<Role>('veteran');
   const [editingName, setEditingName] = useState(false);
@@ -422,6 +425,16 @@ export default function ProfileScreen() {
         </View>
 
       </ScrollView>
+
+      {showTutorial && (
+        <CoachMark
+          title="YOUR PROFILE"
+          body="Manage your call sign and background status here. Premium features — Secure Vault, Pattern Insights, and PDF Export — are accessible from this screen. Everything stays on your device, always."
+          step={4}
+          total={4}
+          onDismiss={dismissTutorial}
+        />
+      )}
     </SafeAreaView>
   );
 }

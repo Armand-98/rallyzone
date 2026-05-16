@@ -2,8 +2,10 @@ import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import CoachMark from '../../components/CoachMark';
 import { getDB } from '../../db/index';
 import { getPref } from '../../db/prefs';
+import { useTutorial } from '../../hooks/useTutorial';
 
 const MOODS  = ['ROUGH', 'LOW', 'OKAY', 'GOOD', 'SOLID'];
 const ENERGY = ['DRAINED', 'TIRED', 'NEUTRAL', 'CHARGED', 'LOCKED IN'];
@@ -185,6 +187,7 @@ function MoodHeatmap({ entries }: { entries: Entry[] }) {
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
 export default function BriefScreen() {
+  const { show: showTutorial, dismiss: dismissTutorial } = useTutorial('tutorial_brief_seen');
   const [callSign,       setCallSign]       = useState('');
   const [amEntry,        setAmEntry]        = useState<Entry | null>(null);
   const [pmEntry,        setPmEntry]        = useState<Entry | null>(null);
@@ -284,6 +287,16 @@ export default function BriefScreen() {
         <MoodHeatmap entries={heatmapEntries} />
 
       </ScrollView>
+
+      {showTutorial && (
+        <CoachMark
+          title="MORNING & EVENING BRIEF"
+          body="Log your mood, energy, and sleep twice a day — once in the morning, once at night. Your 30-day heatmap builds automatically, giving you a clear picture of your patterns over time."
+          step={1}
+          total={4}
+          onDismiss={dismissTutorial}
+        />
+      )}
     </SafeAreaView>
   );
 }
