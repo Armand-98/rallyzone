@@ -9,7 +9,9 @@ import {
     View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import CoachMark from '../../components/CoachMark';
 import { getDB } from '../../db/index';
+import { useTutorial } from '../../hooks/useTutorial';
 
 type TriggerEntry = {
   id: string;
@@ -76,6 +78,7 @@ function EntryCard({ item }: { item: TriggerEntry }) {
 }
 
 export default function LogScreen() {
+  const { show: showTutorial, dismiss: dismissTutorial } = useTutorial('tutorial_log_seen');
   const [entries,    setEntries]    = useState<TriggerEntry[]>([]);
   const [showForm,   setShowForm]   = useState(false);
   const [event,      setEvent]      = useState('');
@@ -195,6 +198,16 @@ export default function LogScreen() {
 
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {showTutorial && (
+        <CoachMark
+          title="TRIGGER LOG"
+          body="When something sets you off, log it here — what happened, how you reacted, and how intense it was on a scale of 1 to 10. Patterns in your triggers become visible over time."
+          step={2}
+          total={4}
+          onDismiss={dismissTutorial}
+        />
+      )}
     </SafeAreaView>
   );
 }

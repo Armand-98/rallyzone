@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import CoachMark from '../../components/CoachMark';
+import { useTutorial } from '../../hooks/useTutorial';
 
 type Tool = null | 'breathing' | 'grounding';
 
@@ -135,6 +137,7 @@ function GroundingTool({ onClose }: { onClose: () => void }) {
 }
 
 export default function CalmScreen() {
+  const { show: showTutorial, dismiss: dismissTutorial } = useTutorial('tutorial_calm_seen');
   const [tool, setTool] = useState<Tool>(null);
 
   if (tool === 'breathing') return <BreathingTool onClose={() => setTool(null)} />;
@@ -177,6 +180,16 @@ export default function CalmScreen() {
         </View>
 
       </ScrollView>
+
+      {showTutorial && (
+        <CoachMark
+          title="CALM TOOLKIT"
+          body="Two evidence-based de-escalation tools, available offline, anytime. Use 4-7-8 Breathing to lower your heart rate fast, or 5-4-3-2-1 Grounding to anchor yourself to the present moment."
+          step={3}
+          total={4}
+          onDismiss={dismissTutorial}
+        />
+      )}
     </SafeAreaView>
   );
 }
